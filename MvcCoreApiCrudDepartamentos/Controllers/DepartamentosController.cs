@@ -34,5 +34,30 @@ namespace MvcCoreApiCrudDepartamentos.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            Departamento data = await
+                this.service.FindDepartamento(id);
+            return View(data);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            Departamento dept = await this.service.FindDepartamento(id);
+            return View(dept);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Departamento dept)
+        {
+            await this.service.UpdateDepartamentoAsync(dept.IdDepartamento, dept.Nombre, dept.Localidad);
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            await this.service.DeleteDepartamentoAsync(id);
+            return RedirectToAction("Index");
+        }
     }
 }

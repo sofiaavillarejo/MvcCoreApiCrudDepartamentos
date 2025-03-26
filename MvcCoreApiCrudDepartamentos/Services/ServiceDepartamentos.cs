@@ -2,6 +2,7 @@
 using System.Text;
 using MvcCoreApiCrudDepartamentos.Models;
 using Newtonsoft.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MvcCoreApiCrudDepartamentos.Services
 {
@@ -45,7 +46,7 @@ namespace MvcCoreApiCrudDepartamentos.Services
 
         public async Task<Departamento> FindDepartamento(int idDepartamento)
         {
-            string request = "api/departamento" + idDepartamento;
+            string request = "api/departamento/" + idDepartamento;
             Departamento data = await this.CallApiAsync<Departamento>(request);
             return data;
         }
@@ -74,6 +75,38 @@ namespace MvcCoreApiCrudDepartamentos.Services
                 //PARA ENVIAR DATOS, SE USA StringContent DONDE DEBEMOS ENVIAR EL JSON, FORMATO Y TIPO
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(request, content);
+            }
+        }
+
+        public async Task UpdateDepartamentoAsync(int id, string nombre, string localidad)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string request = "api/departamento";
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+                Departamento dpto = new Departamento
+                {
+                    IdDepartamento = id,
+                    Nombre = nombre,
+                    Localidad = localidad
+                };
+                string json = JsonConvert.SerializeObject(dpto);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                await client.PutAsync(request, content);
+            }
+        }
+
+        public async Task DeleteDepartamentoAsync(int idDepartamento)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string request = "api/departamento/" + idDepartamento;
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.header);
+                HttpResponseMessage response = await client.DeleteAsync(request);
             }
         }
     }
